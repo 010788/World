@@ -17,7 +17,7 @@ class Person {
     int age;
     char gender;
     char state;
-    Person[] contacts;
+    int[][] contacts;
     Virus virus;
     
         public Person(){
@@ -39,7 +39,6 @@ class Person {
         public void printPerson(){
             System.out.println("person!"+age+gender+state+Arrays.toString(contacts));
         }
-        
-        
+
     }    
 

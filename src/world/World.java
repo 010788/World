@@ -41,8 +41,15 @@ public class World {
                 person[i][j].printPerson();
             }
         }
-//        
+//      
+        System.out.println("Initial state");
+        printStatus();
         runTurn();
+        printStatus();
+        runTurn();
+        printStatus();
+        runTurn();
+        printStatus();
     }
 
     public static void printStatus() {
@@ -63,51 +70,77 @@ public class World {
         System.out.println("i:" + statusI + " s:" + statusS);
     }
 
-    public static Person[] makeContactList() {
-        Person[] listp = new Person[50];
-
-        int[] listb = new int[50];
+    public static int[][] makeContactList() {
+        int[][] posList = new int[50][2];
         Random p = new Random();
 
         for (int j = 0; j < 50; j++) {
-            listb[j] = p.nextInt(width);
+            posList[j][0] = p.nextInt(width);
             {
             }
         }
-
-        int[] listl = new int[50];
         p = new Random();
 
         for (int j = 0; j < 50; j++) {
-            listl[j] = p.nextInt(length);
+            posList[j][1] = p.nextInt(length);
             {
             }
         }
-        for (int j = 0; j < 50; j++) {
-            listp[j] = person[listb[j]][listl[j]];
-        }
-        return listp;
+
+        return posList;
 
     }
 
     static void runTurn() {
+        System.out.println("Run simulation");
+     
+        Person[][] newPersons = copyPersons();
         Random rand = new Random();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < length; j++) {
                 if (person[i][j].state == 's') {
-                    Person[] contacts = person[i][j].contacts;
+                    int[][] contacts = person[i][j].contacts;
                     for (int n = 0; n < 50; n++) {
-                        if (contacts[n].state == 'i') {
+                        if (person[contacts[n][0]][contacts[n][1]].state == 'i') {
                             int p = rand.nextInt(100);
                             if (p < 30) {
-                                person[i][j].state = 'i';
-                                person[i][j].virus = new Virus();
+                                newPersons[i][j].state = 'i';
+                                newPersons[i][j].virus = new Virus();
+                            }
+                        }
+                    }
+                } else if (person[i][j].state == 'i') {
+                    int[][] contacts = person[i][j].contacts;
+                    for (int n = 0; n < 50; n++) {
+                        Person contact = person[contacts[n][0]][contacts[n][1]];
+                        if (contact.state == 's') {
+                            int p = rand.nextInt(100);
+                            if (p < 30) {
+                                newPersons[contacts[n][0]][contacts[n][1]].state = 'i';
+                                newPersons[contacts[n][0]][contacts[n][1]].virus = new Virus();
                             }
                         }
                     }
                 }
             }
         }
-        printStatus();
+        person = newPersons;
+
+    }
+    
+    public static Person[][] copyPersons () {
+        Person[][] newPersons = new Person[width][length];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < length; j++) {
+                newPersons[i][j] = new Person();
+                newPersons[i][j].age = person[i][j].age;
+                newPersons[i][j].gender = person[i][j].gender;
+                newPersons[i][j].state = person[i][j].state;
+                newPersons[i][j].virus = person[i][j].virus;
+                newPersons[i][j].contacts = person[i][j].contacts;
+                
+            }
+        }
+        return newPersons;
     }
 }
